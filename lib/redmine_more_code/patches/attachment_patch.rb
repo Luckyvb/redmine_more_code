@@ -26,14 +26,14 @@ module RedmineMoreCode
 
         base.class_eval do
           unloadable
-                    
-		  def is_code?
-			::CodeRay::FileType[filename].present?
-		  end
+
+          def is_code?
+            ::CodeRay::FileType[filename].present?
+          end
 
         end #class_eval
       end #included
-      
+
     end #module
   end #module
 end #module

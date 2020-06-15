@@ -27,32 +27,37 @@ module RedmineMoreCode
 
         base.class_eval do
           unloadable
-            
-          alias_method_chain   :show, :more_code
+
+          if Rails::VERSION::MAJOR >= 5
+            alias_method :show_without_more_code, :show
+            alias_method :show, :show_with_more_code
+          else
+            alias_method_chain :show, :more_code
+          end
 
         end #base
-        
+
       end #self
 
       module InstanceMethods
-      
-		def show_with_more_code
-		
-		  rendered = false
+
+        def show_with_more_code
+
+          rendered = false
           respond_to do |format|
             format.html {
-			  if @attachment.is_code? && @attachment.filesize <= Setting.file_max_size_displayed.to_i.kilobyte
-				@content = File.read(@attachment.diskfile, :mode => "rb")
-				render :action => 'file'
-				rendered = true			  
+              if @attachment.is_code? && @attachment.filesize <= Setting.file_max_size_displayed.to_i.kilobyte
+                @content = File.read(@attachment.diskfile, :mode => "rb")
+                render :action => 'file'
+                rendered = true
               end #if
             }
             format.any {}
           end #respond_to
           show_without_more_code unless rendered
-		end #def
+        end #def
 
-      end #module      
+      end #module
     end #module
   end #module
 end #module
